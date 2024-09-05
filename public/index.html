@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+    input { width: 100%; padding: 10px; margin: 10px 0; }
+    button { width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>OTP Verification</h2>
+    <input type="text" id="phoneNumber" placeholder="Enter your phone number" />
+    <button onclick="sendOtp()">Send OTP</button>
+    <input type="text" id="otp" placeholder="Enter OTP" />
+    <button onclick="verifyOtp()">Verify OTP</button>
+  </div>
+
+  <script>
+    function sendOtp() {
+      const phoneNumber = document.getElementById('phoneNumber').value;
+
+      fetch('/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('OTP sent to your phone!');
+        } else {
+          alert('Error: ' + data.error);
+        }
+      })
+      .catch(error => alert('Error: ' + error.message));
+    }
+
+    function verifyOtp() {
+      const otp = document.getElementById('otp').value;
+
+      fetch('/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ otp })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/application.html';  // Redirect to the application form page
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => alert('Error: ' + error.message));
+    }
+  </script>
+</body>
+</html>

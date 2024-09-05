@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+    input, select { width: 100%; padding: 10px; margin: 10px 0; }
+    button { width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Application Form</h2>
+    <form id="applicationForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="date" id="dob" placeholder="Date of Birth" required />
+      <input type="email" id="email" placeholder="Email Address" required />
+      <input type="text" id="phone" placeholder="Phone Number" required readonly />
+      <input type="text" id="address" placeholder="Address" required />
+      <select id="position" required>
+        <option value="" disabled selected>Select Position</option>
+        <option value="developer">Developer</option>
+        <option value="designer">Designer</option>
+        <option value="manager">Manager</option>
+      </select>
+      <button type="button" onclick="submitApplication()">Submit Application</button>
+    </form>
+  </div>
+
+  <script>
+    // Pre-fill phone number from the OTP verification step
+    document.getElementById('phone').value = localStorage.getItem('verifiedPhoneNumber');
+
+    function submitApplication() {
+      const applicationData = {
+        name: document.getElementById('name').value,
+        dob: document.getElementById('dob').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        position: document.getElementById('position').value,
+      };
+
+      fetch('/submit-application', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(applicationData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('applicationId', data.applicationId);
+          window.location.href = '/success.html'; // Redirect to success page
+        } else {
+          alert('Error: ' + data.error);
+        }
+      })
+      .catch(error => alert('Error: ' + error.message));
+    }
+  </script>
+</body>
+</html>
